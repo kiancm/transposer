@@ -12,11 +12,8 @@ PrintWriter out;
 SoundFile file; 
 AudioDevice board; 
 FFT fft;
-boolean first;
-
 
 void setup() {
-  first = true;
   spectrum = new float[sampleSize];
   os_spectrum = new float[sampleSize / 2];
   frequencies = new float[sampleSize / 2];
@@ -53,5 +50,5 @@ void draw() {
              "Largest Amplitude: " + max +
              "\nLargest Frequency: " + max_f
              );
-   exit();
+  exit();
 }
