@@ -1,3 +1,5 @@
+import processing.serial.*;
+
 import ddf.minim.*;
 import ddf.minim.analysis.*;
 import ddf.minim.effects.*;
@@ -11,17 +13,20 @@ import processing.sound.AudioDevice;
 
 int sampleRate = 44100;
 int sampleSize = 4096;
+int micPin = 0;
+float[] micBuffer;
 Minim minim;
 AudioInput ain;
 AudioOutput aout;
 Oscil wave1;
 Oscil wave2;
 Oscil wave3;
-AudioDevice board; 
+Arduino board; 
 FFT fft;
 
 void setup() {
-  size(511, 511);
+  size(511, 255);
+  micBuffer = new float[sampleSize];
   minim = new Minim(this);
   ain = minim.getLineIn(Minim.MONO, sampleSize);
   aout = minim.getLineOut(Minim.MONO, sampleSize);
@@ -32,9 +37,10 @@ void setup() {
   wave1.patch(aout);
   wave2.patch(aout);
   wave3.patch(aout);
-  board = new AudioDevice(this, sampleRate, sampleSize);
+  board = new Arduino(this, Arduino.list()[0], 57600);
   //fft = new FFT(aout.bufferSize(), aout.sampleRate());
   fft = new FFT(ain.bufferSize(), ain.sampleRate());
+  //fft = new FFT(micBuffer.length, sampleRate);
   
   //fft.forward(aout.mix);
   //float max_amp1 = -1;
@@ -72,6 +78,10 @@ void setup() {
 
 void draw() {
   background(50, 50, 50);
+  //for (int i = 0; i < sampleSize; i++) {
+  //  micBuffer[i] = board.analogRead(micPin);  
+  //}
+  //fft.forward(micBuffer);
   fft.forward(ain.mix);
   float max_amp1 = -1;
   float max_amp2 = -1;
@@ -103,8 +113,4 @@ void draw() {
   text("Largest Amplitudes: " + max_amp1 + ", " + max_amp2 + ", " + max_amp3, 0, 20);
   text("Largest Frequencies: " + max_f1 + ", " + max_f2 + ", " + max_f3, 0, 50);
   delay(300);
-  //println(
-  //       "Largest Amplitudes: " + max_amp1 + ", " + max_amp2 + ", " + max_amp3 +
-  //       "\nLargest Frequencies: " + max_f1 + ", " + max_f2 + ", " + max_f3
-  //       );
 }
