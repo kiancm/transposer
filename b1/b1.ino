@@ -177,25 +177,28 @@ void loop() {
     L = pgm_read_byte(&noise[x]);
     spectrum[x] = (spectrum[x] <= L) ? 0 :
       (((spectrum[x] - L) * (256L - pgm_read_byte(&eq[x]))) >> 8);
-    float v = spectrum[i];
-    if (spectrum[max[0]] < v) {
-        max[2] = max[1];
-        max[1] = max[0];
-        max[0] = i;
-    }
-    else if (spectrum[max[1]] < v) {
-        max[2] = max[1];
-        max[1] = i;
-    }
-    else if (spectrum[max[2]] < v) {
-        max[2] = i;
-    }
-    freqs[0].f = spectrum[max[0]] * 9615 / (FFT_N / 2);
-    serial.write(freqs[0].b, 4);
-    freqs[1].f = spectrum[max[1]] * 9615 / (FFT_N / 2);
-    serial.write(freqs[1].b, 4);
-    freqs[2].f = spectrum[max[2]] * 9615 / (FFT_N / 2);
-    serial.write(freqs[2].b, 4);
+//    float v = spectrum[i];
+//    if (spectrum[max[0]] < v) {
+//        max[2] = max[1];
+//        max[1] = max[0];
+//        max[0] = i;
+//    }
+//    else if (spectrum[max[1]] < v) {
+//        max[2] = max[1];
+//        max[1] = i;
+//    }
+//    else if (spectrum[max[2]] < v) {
+//        max[2] = i;
+//    }
+//   
+//    freqs[0].f = spectrum[max[0]] * 9615 / (FFT_N / 2);
+//    serial.write(freqs[0].b, 4);
+//    Serial.println(spectrum[i]);
+//    freqs[1].f = spectrum[max[1]] * 9615 / (FFT_N / 2);
+//    Serial.println(freqs[1].f);
+//    freqs[2].f = spectrum[max[2]] * 9615 / (FFT_N / 2);
+//    serial.write(freqs[2].b, 4);
+//    Serial.println(freqs[2].f);
   }
   // Fill background w/colors, then idle parts of columns will erase
   matrix.fillRect(0, 0, 8, 3, LED_RED);    // Upper section

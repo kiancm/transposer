@@ -23,8 +23,13 @@ Oscil wave2;
 Oscil wave3;
 Arduino board; 
 FFT fft;
+Serial serial;
 
 void setup() {
+  for (String s : Serial.list()) {
+    println(s);
+  }
+  serial = new Serial(this, Serial.list()[1], 57600);
   size(511, 255);
   micBuffer = new float[sampleSize];
   minim = new Minim(this);
@@ -37,7 +42,7 @@ void setup() {
   wave1.patch(aout);
   wave2.patch(aout);
   wave3.patch(aout);
-  board = new Arduino(this, Arduino.list()[0], 57600);
+  //board = new Arduino(this, Arduino.list()[0], 57600);
   //fft = new FFT(aout.bufferSize(), aout.sampleRate());
   fft = new FFT(ain.bufferSize(), ain.sampleRate());
   //fft = new FFT(micBuffer.length, sampleRate);
@@ -99,6 +104,18 @@ void draw() {
         max[2] = i;
     }
   }
+  //print( String.format("%06.2f",fft.indexToFreq(max[0])) + " "
+  //     + String.format("%06.2f",fft.indexToFreq(max[1])) + " " 
+  //     + String.format("%06.2f",fft.indexToFreq(max[2])) + "\n"
+  //     );
+  serial.write( String.format("%06.2f",fft.indexToFreq(max[0])) + " "
+              + String.format("%06.2f",fft.indexToFreq(max[1])) + " " 
+              + String.format("%06.2f",fft.indexToFreq(max[2])) + "\n"
+              );
+  //if (serial.available() == 1) {
+     println(serial.read());
+  //}
+ 
   text("Largest Amplitudes: " + fft.getBand(max[0]) + ", " + fft.getBand(max[1]) + ", " + fft.getBand(max[2]), 0, 20);
   text("Largest Frequencies: " + fft.indexToFreq(max[0]) + ", " + fft.indexToFreq(max[1]) + ", " + fft.indexToFreq(max[2]), 0, 50);
   delay(300);
