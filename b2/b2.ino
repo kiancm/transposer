@@ -3,7 +3,6 @@
    piezo buzzer, the LCD display, and the potentiometer */
 /****************************************************************************************/
 #include <LiquidCrystal.h>  // For the LCD display
-#include <SoftwareSerial.h>
 const int potPin = A1;    //to use as a selector
 const int ampPin = 9;   // Set the pins for each input and output
 const int buttonPin = 8;
@@ -91,7 +90,7 @@ void loop() {
 ////      lcd.clear();
 //      lcd.print("06");
 //  	  shift = 6;
-//  	}
+//  	}      
 //  	else if(analogRead(potPin)>=473 && analogRead(potPin)< 551)  // Shift up 7 semitones
 //  	{
 ////  	  lcd.setCursor(15,1);
@@ -145,35 +144,35 @@ void loop() {
    
   delay(1000);          //delay time for the user to start recording
   char freqs[20];
+  float freqs_f[3];
 //  while (digitalRead(buttonPin) != LOW) { // Begin recording by saying if the button is not pressed (i.e. press the button to stop)
        //Serial.println("Test");
        if (Serial.available()) {
-        Serial.readBytesUntil("\n", freqs, 20);
-        for (int i = 0; i < 20; i++) {
-          if (i == 16) {
-            lcd.setCursor(0,1); 
-          }
-          if (freqs[i] != '\\' && freqs[i] != 'n') {
-            lcd.print(freqs[i]);
-          }
-        }
-        delay(4000);
-        lcd.clear();
-        lcd.setCursor(0,0);
+        Serial.readBytesUntil('\n', freqs, 20);
+//        for (int i = 0; i < 20; i++) {
+//          if (i == 16) {
+//            lcd.setCursor(0,1); 
+//          }
+//            lcd.print(freqs[i]);
+//        }
+//        lcd.clear();
+//        lcd.setCursor(0,0);
+//        delay(500);
        }
+       //Serial.println(freqs);
 //  }
-
-//  for (int i = 0; i < 3; i++) {
-//    freqs[i].f *= pow(2, (float)shift / 12);    //Apply the transposition to each of the 3 harmonic tones
-//  }
-
-//  for (int sample = 0; sample < sampleRate * duration; sample++) {       
-//     float t = (float)sample / sampleRate;                          
-//     float music = 0.5 * sin(2 * pi * freqs[0].f * t) + 0.5 * sin(2 * pi * freqs[1].f * t) + 0.5 * sin(2 * pi * freqs[2].f * t);
-//     analogWrite(ampPin, music);      //send to amp and speaker
-//     
-//    }
-//     analogWrite(ampPin, 0);
-     //the loop repeats for each note the user wants to transpose                                      
+  freqs_f[0] = String(freqs).substring(0,6).toFloat();
+  freqs_f[1] = String(freqs).substring(7,13).toFloat();
+  freqs_f[2] = String(freqs).substring(14,20).toFloat();
+  for (int i = 0; i < 3; i++) {
+    freqs_f[i] *= pow(2, (float)shift / 12);    //Apply the transposition to each of the 3 harmonic tones
+  }
+  for (int sample = 0; sample < sampleRate * duration; sample++) {       
+     float t = (float)sample / sampleRate;                          
+     float music = 0.5 * sin(2 * pi * freqs_f[0] * t) + 0.5 * sin(2 * pi * freqs_f[1] * t) + 0.5 * sin(2 * pi * freqs_f[2] * t);
+     analogWrite(ampPin, music);      //send to amp and speaker   
+  }
+  analogWrite(ampPin, 0);
+  //the loop repeats for each note the user wants to transpose                                      
 }
 

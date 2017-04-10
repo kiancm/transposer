@@ -9,7 +9,6 @@ import ddf.minim.ugens.*;
 
 import cc.arduino.*;
 import org.firmata.*;
-import processing.sound.AudioDevice;
 
 int sampleRate = 44100;
 int sampleSize = 4096;
@@ -29,7 +28,7 @@ void setup() {
   for (String s : Serial.list()) {
     println(s);
   }
-  serial = new Serial(this, Serial.list()[1], 57600);
+  serial = new Serial(this, Serial.list()[0], 57600);
   size(511, 255);
   micBuffer = new float[sampleSize];
   minim = new Minim(this);
@@ -112,10 +111,7 @@ void draw() {
               + String.format("%06.2f",fft.indexToFreq(max[1])) + " " 
               + String.format("%06.2f",fft.indexToFreq(max[2])) + "\n"
               );
-  //if (serial.available() == 1) {
-     println(serial.read());
-  //}
- 
+  println(serial.read());
   text("Largest Amplitudes: " + fft.getBand(max[0]) + ", " + fft.getBand(max[1]) + ", " + fft.getBand(max[2]), 0, 20);
   text("Largest Frequencies: " + fft.indexToFreq(max[0]) + ", " + fft.indexToFreq(max[1]) + ", " + fft.indexToFreq(max[2]), 0, 50);
   delay(300);
