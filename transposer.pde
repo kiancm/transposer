@@ -28,7 +28,7 @@ void setup() {
   for (String s : Serial.list()) {
     println(s);
   }
-  serial = new Serial(this, Serial.list()[0], 57600);
+  serial = new Serial(this, Serial.list()[1], 57600);
   size(511, 255);
   micBuffer = new float[sampleSize];
   minim = new Minim(this);
@@ -103,15 +103,17 @@ void draw() {
         max[2] = i;
     }
   }
-  //print( String.format("%06.2f",fft.indexToFreq(max[0])) + " "
-  //     + String.format("%06.2f",fft.indexToFreq(max[1])) + " " 
-  //     + String.format("%06.2f",fft.indexToFreq(max[2])) + "\n"
-  //     );
-  serial.write( String.format("%06.2f",fft.indexToFreq(max[0])) + " "
-              + String.format("%06.2f",fft.indexToFreq(max[1])) + " " 
-              + String.format("%06.2f",fft.indexToFreq(max[2])) + "\n"
-              );
-  println(serial.read());
+  print( String.format("%07.2f",fft.indexToFreq(max[0])) + " "
+       + String.format("%07.2f",fft.indexToFreq(max[1])) + " " 
+       + String.format("%07.2f",fft.indexToFreq(max[2])) + "\n"
+       );
+  if (fft.indexToFreq(max[0]) <= 9999.99 && fft.indexToFreq(max[1]) <= 9999.99 && fft.indexToFreq(max[2]) <= 9999.99) {
+    serial.write( String.format("%07.2f",fft.indexToFreq(max[0])) + " "
+                + String.format("%07.2f",fft.indexToFreq(max[1])) + " " 
+                + String.format("%07.2f",fft.indexToFreq(max[2])) + "\n"
+                );  
+  }
+  //println(serial.read());
   text("Largest Amplitudes: " + fft.getBand(max[0]) + ", " + fft.getBand(max[1]) + ", " + fft.getBand(max[2]), 0, 20);
   text("Largest Frequencies: " + fft.indexToFreq(max[0]) + ", " + fft.indexToFreq(max[1]) + ", " + fft.indexToFreq(max[2]), 0, 50);
   delay(300);
