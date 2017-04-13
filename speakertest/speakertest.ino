@@ -2,30 +2,27 @@
 *  This code is for the second RedBoard, which controls both buttons, the
 *  piezo buzzer, the LCD display, and the potentiometer */
 /*-----------------------------------------------------------------------------*/
-#include <LiquidCrystal.h>
-const int potPin = A1;
-const int ampPin = 9;
-const int buttonPin = 7;
-const unsigned int sampleRate = 44100;
-float freqs_f[3];
-
+#include <MozziGuts.h>
+#include <Oscil.h>
+#include <tables/sin4096_int8.h>
+Oscil <SIN4096_NUM_CELLS, AUDIO_RATE> aSin0(SIN4096_DATA);
+Oscil <SIN4096_NUM_CELLS, AUDIO_RATE> aSin1(SIN4096_DATA);
+Oscil <SIN4096_NUM_CELLS, AUDIO_RATE> aSin2(SIN4096_DATA);
 void setup() {
-    int contrast = 85;
-    analogWrite(6, contrast);
-    pinMode(potPin, INPUT);
-    pinMode(ampPin, OUTPUT);
-    pinMode(buttonPin, INPUT);
-    Serial.begin(57600);
-    freqs_f[0] = 130.81;
-    freqs_f[1] = 164.81;
-    freqs_f[2] = 196;
+    startMozzi(CONTROL_RATE);
+    aSin0.setFreq(523);
+    aSin1.setFreq(659);
+    aSin2.setFreq(784);
+}
+
+void updateControl() {
+
+}
+
+int updateAudio() {
+    return (int) (.5 * aSin0.next() + .25 * aSin1.next() + .25 * aSin2.next());
 }
 
 void loop() {
-    int shift = map(analogRead(potPin), 0, 1023, 0, 12);
-    for (unsigned int sample = 0; sample < sampleRate; sample++) {
-        float t = sample / (float) sampleRate;
-        float music = 0.5 * sin(2 * PI * freqs_f[0] * t) + 0.5 * sin(2 * PI * freqs_f[1] * t) + 0.5 * sin(2 * PI * freqs_f[2] * t) + 1.5;
-        analogWrite(ampPin, music * 255/3.0);
-    }
+    audioHook();
 }

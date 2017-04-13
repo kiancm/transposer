@@ -7,9 +7,6 @@ import ddf.minim.signals.*;
 import ddf.minim.spi.*;
 import ddf.minim.ugens.*;
 
-import cc.arduino.*;
-import org.firmata.*;
-
 int sampleRate = 44100;
 int sampleSize = 4096;
 int micPin = 0;
@@ -20,7 +17,6 @@ AudioOutput aout;
 Oscil wave1;
 Oscil wave2;
 Oscil wave3;
-Arduino board; 
 FFT fft;
 Serial serial;
 
